@@ -5,16 +5,14 @@ import {
   StyleSheet,
   Text,
   View,
+  FlatList,
 } from "react-native";
-import useSWR from "swr";
-
-const fetcher = (...args) => fetch(...args).then((res) => res.json());
+import PostListItem from "./src/components/PostListItem";
+import { usePosts } from "./src/hooks/posts";
 
 export default function App() {
-  const { data, error, isLoading } = useSWR(
-    "https://jsonplaceholder.typicode.com/posts",
-    fetcher
-  );
+
+  const { posts, isLoading, error } = usePosts();
 
   if (isLoading) {
     return (
@@ -32,12 +30,18 @@ export default function App() {
     );
   }
 
-  console.log(JSON.stringify(data));
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <FlatList
+        data={posts}
+        renderItem={({ item }) => (
+          <PostListItem
+            post={item}
+            contentContainerStyle={{ gap: 10, padding: 10 }}
+          />
+        )}
+      />
     </SafeAreaView>
   );
 }
@@ -45,7 +49,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "ghostwhite",
     alignItems: "center",
     justifyContent: "center",
   },
